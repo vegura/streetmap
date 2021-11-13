@@ -17,7 +17,7 @@ from main.visu.geo_web_canvas import GeoWebCanvas
 WIDTH = 450
 HEIGHT = 190
 
-class RunnableTourSimGeoFactory():
+class RunnableTourSimGeoFactory:
     def generate_geo_instance(self, order):
         geo_info: GeoInfo = order.convert_from_geo_info()
         result = RunnableTourSimGeo(geo_info)

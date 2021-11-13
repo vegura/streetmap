@@ -166,6 +166,7 @@ def load_nodes_order(route_points, graph) -> pd.DataFrame:
     "lat": list(map(lambda point: point["x"], route_points)),
     "lon": list(map(lambda point: point["y"], route_points)),
     "description": list(map(lambda point: point["description"], route_points))})
+    add_nearest_osm_nodes(graph, df)
     return df
 
 

@@ -11,7 +11,7 @@ from flask import Flask, request, send_file, send_from_directory
 from flask_cors import CORS
 
 from main.model.model import Order
-from main.runnables.geo_web_animation import RunnableTourSimGeoFactory
+#from main.runnables.geo_web_animation import RunnableTourSimGeoFactory
 
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
@@ -29,7 +29,8 @@ class FlaskSimServer:
     def run_sim_server(self):
         app = Flask(__name__)
         CORS(app)
-        app_dir = os.path.dirname(os.path.abspath(self.root_file))
+        #app_dir = os.path.dirname(os.path.abspath(self.root_file))
+        app_dir = os.path.dirname(os.path.abspath('root_dir.py'))
         flask_dir = os.path.dirname(os.path.abspath(__file__))
         print(
             "starting flask server, app_dir: %s, flask_dir: %s" % (app_dir, flask_dir)
@@ -67,68 +68,72 @@ class FlaskSimServer:
                       "id": 1,
                       "postal_code": "SW1X 8BY",
                       "x": 51.49701939844378,
-                      "y": -0.15334817975876766
+                      "y": -0.15334817975876766,
+                      "description": "aaaaa"
                     },
                     {
                       "id": 2,
                       "postal_code": "SW1X 9BC",
                       "x": 51.4952531089578,
-                      "y": -0.14379338326757904
+                      "y": -0.14379338326757904,
+                      "description": "aaaaa"
                     },
                     {
                       "id": 3,
                       "postal_code": "SW1X 4EZ",
                       "x": 51.49404056290103,
-                      "y": -0.15337663339296168
+                      "y": -0.15337663339296168,
+                      "description": "aaaaa"
                     }
                   ],
                   "feedback": "Was a nice ride"
             }
             order = Order(order_json["id"], order_json["route_points"], order_json["feedback"])
-            if sim_instances[]
-            runnable_sim = self.sim_factory.generate_geo_instance(order)
-            sim_conrtoller = SimController(runnable_sim)
+            if not str(order_id) in sim_instances.keys():
+                runnable_sim = self.sim_factory.generate_geo_instance(order)
+                sim_conrtoller = SimController(runnable_sim)
+                sim_instances[str(order_id)] = sim_conrtoller
             HTML_FILE = "geo_animation.html"
-            return send_from_directory(flask_dir, HTML_FILE, sim_conrtoller=sim_conrtoller)
+            #return send_from_directory(flask_dir, HTML_FILE, sim_instances[str(order_id)])
+            return send_from_directory(flask_dir, HTML_FILE)
+
             # return str(sim_conrtoller.get)
 
 
 
 
-        @app.route("/width/<order>")
-        def get_width(order):
+        @app.route("/width/<order_id>")
+        def get_width(order_id):
+            return str(sim_instances[order_id].get_sim_width())
 
-            # sim_instances[order]
-            return str(self.sim_controller.get_sim_width())
-
-        @app.route("/height")
-        def get_height():
-            return str(self.sim_controller.get_sim_height())
-
-        @app.route("/state")
-        def get_state():
-            return self.sim_controller.get_state_dumps()
-
-        @app.route("/start", methods=["POST"])
-        def start():
-            return self.sim_controller.start_simulation_process()
-
-        @app.route("/stop", methods=["POST"])
-        def stop():
-            return self.sim_controller.reset_sim()
-
-        @app.route("/pause", methods=["POST"])
-        def pause():
-            return self.sim_controller.pause_sim()
-
-        @app.route("/resume", methods=["POST"])
-        def resume():
-            return self.sim_controller.resume_sim()
-
-        @app.route("/rt_factor", methods=["POST"])
-        def post_rt_factor():
-            value = float(request.args.get("value"))
-            return self.sim_controller.set_rt_factor(value)
+        # @app.route("/height")
+        # def get_height():
+        #     return str(self.sim_controller.get_sim_height())
+        #
+        # @app.route("/state")
+        # def get_state():
+        #     return self.sim_controller.get_state_dumps()
+        #
+        # @app.route("/start", methods=["POST"])
+        # def start():
+        #     return self.sim_controller.start_simulation_process()
+        #
+        # @app.route("/stop", methods=["POST"])
+        # def stop():
+        #     return self.sim_controller.reset_sim()
+        #
+        # @app.route("/pause", methods=["POST"])
+        # def pause():
+        #     return self.sim_controller.pause_sim()
+        #
+        # @app.route("/resume", methods=["POST"])
+        # def resume():
+        #     return self.sim_controller.resume_sim()
+        #
+        # @app.route("/rt_factor", methods=["POST"])
+        # def post_rt_factor():
+        #     value = float(request.args.get("value"))
+        #     return self.sim_controller.set_rt_factor(value)
 
         app.run(debug=True, threaded=False, port=5000, host="0.0.0.0")
 
@@ -143,7 +148,7 @@ class FlaskSimServer:
 #     flask_sim_server = FlaskSimServer(sim_controller)
 #     flask_sim_server.run_sim_server()
 
-def run_server():
-    sim_factory = RunnableTourSimGeoFactory()
+def run_server(sim_factory):
+    #sim_factory = RunnableTourSimGeoFactory()
     flask_sim_server = FlaskSimServer(sim_factory)
     flask_sim_server.run_sim_server()

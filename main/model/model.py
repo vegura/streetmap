@@ -7,7 +7,7 @@ from main.model.blocks.drive_tour import DriveTour
 from main.model.blocks.truck import Truck
 from main.model.geo_info_setup import get_geo_info
 
-geo_info: GeoInfo = get_geo_info()
+#geo_info: GeoInfo = get_geo_info()
 
 class Order:
     def __init__(self, id, route_points, feedback):
@@ -21,7 +21,8 @@ class Order:
         ## CENTER - get centroid between route points
         ## DISTANCE - get max distance from centroid to route points + delta
         CENTER = (51.4978, -0.1533)
-        DISTANCE = 5000
+        DISTANCE = 3000
+        NETWORK_TYPE="drive"
         return init(
             route_points = self.route_points,
             #nodes_csv_path=NODES_CSV_PATH,
