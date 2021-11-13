@@ -49,37 +49,41 @@ class GeoInfo:
 
 
 def init(
-    nodes_csv_path: str,
+    route_points: list,
+    #nodes_csv_path: str,
     center: Tuple[float, float],
     distance: float,
     network_type="drive",
 ) -> GeoInfo:
 
-    h = create_hash(
-        get_file_hash(nodes_csv_path) + get_graph_hash(center, distance, network_type)
-    )
-    cache_dir = get_cache_dir(nodes_csv_path)
-    cache_path = cache_dir + "/_temp_" + h + ".pickle"
-    try:
-        with open(cache_path, "rb") as f:
-            geo_info = pickle.load(f)
-    except FileNotFoundError:
-        geo_info = _init_geo_info(nodes_csv_path, center, distance, network_type)
-        with open(cache_path, "wb+") as f:
-            pickle.dump(geo_info, f)
+    #h = create_hash(
+    #    get_file_hash(nodes_csv_path) + get_graph_hash(center, distance, network_type)
+    #)
+    #cache_dir = get_cache_dir(nodes_csv_path)
+    #cache_path = cache_dir + "/_temp_" + h + ".pickle"
+    #try:
+    #    with open(cache_path, "rb") as f:
+    #        geo_info = pickle.load(f)
+    #except FileNotFoundError:
+    #geo_info = _init_geo_info(nodes_csv_path, center, distance, network_type)
+    geo_info = _init_geo_info(route_points, center, distance, network_type)
+    #    with open(cache_path, "wb+") as f:
+    #        pickle.dump(geo_info, f)
     return geo_info
 
 
 def _init_geo_info(
-    nodes_csv_path: str,
+    route_points: list,
+    #nodes_csv_path: str,
     center: Tuple[float, float],
     distance: float,
     network_type="drive",
 ) -> GeoInfo:
     geo_info = GeoInfo()
 
-    G = load_graph(nodes_csv_path, center, distance, network_type)
-    od_nodes = load_nodes_csv(nodes_csv_path, G)
+    G = load_graph(center, distance, network_type)
+    #od_nodes = load_nodes_csv(nodes_csv_path, G)
+    od_nodes = load_nodes_order(route_points, G)
 
     names = {}
     descriptions = {}
@@ -120,35 +124,50 @@ def _init_geo_info(
     return geo_info
 
 
-def load_graph(nodes_csv_path, center, distance, network_type):
-    file_h = get_graph_hash(center, distance, network_type)
-    file_name = "_temp_" + file_h + ".graphml"
-    cache_dir = get_cache_dir(nodes_csv_path)
+# def load_graph(nodes_csv_path, center, distance, network_type):
+#     file_h = get_graph_hash(center, distance, network_type)
+#     file_name = "_temp_" + file_h + ".graphml"
+#     cache_dir = get_cache_dir(nodes_csv_path)
+#
+#     try:
+#         return ox.load_graphml(file_name, folder=cache_dir)
+#     except FileNotFoundError:
+#         G = ox.graph_from_point(
+#             center, distance=distance, simplify=False, network_type=network_type
+#         )
+#         ox.save_graphml(G, filename=file_name, folder=cache_dir)
+#         return G
 
-    try:
-        return ox.load_graphml(file_name, folder=cache_dir)
-    except FileNotFoundError:
-        G = ox.graph_from_point(
-            center, distance=distance, simplify=False, network_type=network_type
-        )
-        ox.save_graphml(G, filename=file_name, folder=cache_dir)
-        return G
+def load_graph(center, distance, network_type):
+    G = ox.graph_from_point(
+        center, distance=distance, simplify=False, network_type=network_type
+    )
+    #ox.save_graphml(G, filename=file_name, folder=cache_dir)
+    return G
 
+# def load_nodes_csv(nodes_csv_path, graph) -> pd.DataFrame:
+#     with open(nodes_csv_path, "r") as f:
+#         inp = f.read()
+#     file_h = create_hash(inp)
+#     cache_dir = get_cache_dir(nodes_csv_path)
+#     cache_path = cache_dir + "/_temp_" + file_h + ".csv"
+#     index_col = "node"
+#     try:
+#         return pd.read_csv(cache_path, index_col=index_col)
+#     except FileNotFoundError:
+#         df = pd.read_csv(nodes_csv_path, index_col=index_col)
+#         add_nearest_osm_nodes(graph, df)
+#         df.to_csv(cache_path)
+#         return df
 
-def load_nodes_csv(nodes_csv_path, graph) -> pd.DataFrame:
-    with open(nodes_csv_path, "r") as f:
-        inp = f.read()
-    file_h = create_hash(inp)
-    cache_dir = get_cache_dir(nodes_csv_path)
-    cache_path = cache_dir + "/_temp_" + file_h + ".csv"
-    index_col = "node"
-    try:
-        return pd.read_csv(cache_path, index_col=index_col)
-    except FileNotFoundError:
-        df = pd.read_csv(nodes_csv_path, index_col=index_col)
-        add_nearest_osm_nodes(graph, df)
-        df.to_csv(cache_path)
-        return df
+# Ilya Tsuprun version
+def load_nodes_order(route_points, graph) -> pd.DataFrame:
+    df = pd.DataFrame.from_dict({"node": list(map(lambda point: point["postal_code"], route_points)),
+    "lat": list(map(lambda point: point["x"], route_points)),
+    "lon": list(map(lambda point: point["y"], route_points)),
+    "description": list(map(lambda point: point["description"], route_points))})
+    return df
+
 
 
 def get_cache_dir(nodes_csv_path) -> str:
@@ -179,10 +198,26 @@ def add_nearest_osm_nodes(graph, df: pd.DataFrame):
     df.insert(3, "osm_id", osm_nodes)
 
 
-def draw_graph(nodes_csv_path, center, distance, network_type):
+# def draw_graph(nodes_csv_path, center, distance, network_type):
+#     """ plots graph with relevant nodes """
+#     G = load_graph(nodes_csv_path, center, distance, network_type)
+#     od_nodes = load_nodes_csv(nodes_csv_path, G)
+#
+#     g_nodes = list(G.nodes().keys())
+#     nc = ["#336699" for _ in g_nodes]
+#     node_size = [75 for _ in g_nodes]
+#     for odn in od_nodes["osm_id"]:
+#         idx = g_nodes.index(odn)
+#         nc[idx] = "r"
+#         node_size[idx] = 150
+#     assert "r" in nc
+#
+#     ox.plot_graph(G, node_color=nc, node_zorder=3, node_alpha=0.5, node_size=node_size)
+
+def draw_graph(route_points, center, distance, network_type):
     """ plots graph with relevant nodes """
-    G = load_graph(nodes_csv_path, center, distance, network_type)
-    od_nodes = load_nodes_csv(nodes_csv_path, G)
+    G = load_graph(center, distance, network_type)
+    od_nodes = load_nodes_order(route_points, G)
 
     g_nodes = list(G.nodes().keys())
     nc = ["#336699" for _ in g_nodes]

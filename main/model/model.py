@@ -1,4 +1,5 @@
 from typing import Any, Dict, List
+from main.geo.geo_info import init
 from casymda.blocks import Sink, Source
 
 from main.geo.geo_info import GeoInfo
@@ -6,8 +7,28 @@ from main.model.blocks.drive_tour import DriveTour
 from main.model.blocks.truck import Truck
 from main.model.geo_info_setup import get_geo_info
 
-# geo_info: GeoInfo = get_geo_info()
+geo_info: GeoInfo = get_geo_info()
 
+class Order:
+    def __init__(self, id, route_points, feedback):
+        self.id = id
+        self.route_points = route_points
+        self.feedback = feedback
+
+    def convert_from_geo_info(self) -> GeoInfo:
+        ## define center
+        ## define distance
+        ## CENTER - get centroid between route points
+        ## DISTANCE - get max distance from centroid to route points + delta
+        CENTER = (51.4978, -0.1533)
+        DISTANCE = 5000
+        return init(
+            route_points = self.route_points,
+            #nodes_csv_path=NODES_CSV_PATH,
+            center=CENTER,
+            distance=DISTANCE,
+            network_type=NETWORK_TYPE,
+        )
 
 class Model:
     def __init__(self, env, geo_info: GeoInfo):

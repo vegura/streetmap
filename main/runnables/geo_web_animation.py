@@ -19,8 +19,9 @@ HEIGHT = 190
 
 class RunnableTourSimGeoFactory():
     def generate_geo_instance(self, order):
-        geo_info: GeoInfo = get_geo_info()
+        geo_info: GeoInfo = order.convert_from_geo_info()
         result = RunnableTourSimGeo(geo_info)
+        return result
 
 
 class RunnableTourSimGeo(RunnableSimulation):
@@ -46,5 +47,5 @@ class RunnableTourSimGeo(RunnableSimulation):
 
 
 def run_animation():
-    rs = RunnableTourSimGeo()
-    fss.run_server(rs)
+    rs_factory = RunnableTourSimGeoFactory()
+    fss.run_server(rs_factory)
