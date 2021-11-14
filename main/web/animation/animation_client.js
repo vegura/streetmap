@@ -1,7 +1,9 @@
 console.log("animation_client.js loaded");
 
 // constants
-const BASE_URL = window.location.origin;
+// const BASE_URL = window.location.origin;
+
+const BASE_URL = window.location.href;
 const START_URL = BASE_URL + "/start";
 const PAUSE_URL = BASE_URL + "/pause";
 const RESUME_URL = BASE_URL + "/resume";
