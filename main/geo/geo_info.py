@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 import networkx as nx
 import osmnx as ox
 import pandas as pd
-
+import time
 from main.geo.base.point import Point
 from main.geo.base.segment import Segment
 
@@ -80,10 +80,15 @@ def _init_geo_info(
     network_type="drive",
 ) -> GeoInfo:
     geo_info = GeoInfo()
-
+    print("Start loading graph")
+    start_time = time.time()
     G = load_graph(center, distance, network_type)
+    print("Graph loaded in", start_time-time.time())
     #od_nodes = load_nodes_csv(nodes_csv_path, G)
+    print("Beginning loading nodes")
+    start_time = time.time()
     od_nodes = load_nodes_order(route_points, G)
+    print("Nodes loaded in", start_time - time.time())
 
     names = {}
     descriptions = {}
@@ -141,11 +146,23 @@ def _init_geo_info(
 #         return G
 
 def load_graph(center, distance, network_type):
-    G = ox.graph_from_point(
-        center, distance=distance, simplify=False, network_type=network_type
-    )
-    #ox.save_graphml(G, filename=file_name, folder=cache_dir)
-    return G
+    file_h = get_graph_hash(center, distance, network_type)
+    file_name = "_temp_" + file_h + ".graphml"
+    cache_dir = "/usr/src/cache"
+    #ox.config(use_cache = True)
+    try:
+        start_time = time.time()
+        print("Extracting graph from cache...")
+        graph = ox.load_graphml(file_name, folder=cache_dir)
+        print("Graph extracted from cache in: ", start_time - time.time())
+        return graph
+    except:
+        print("Unable to extract graph from cache")
+        G = ox.graph_from_point(
+            center, distance=distance, simplify=False, network_type=network_type
+        )
+        ox.save_graphml(G, filename=file_name, folder=cache_dir)
+        return G
 
 # def load_nodes_csv(nodes_csv_path, graph) -> pd.DataFrame:
 #     with open(nodes_csv_path, "r") as f:

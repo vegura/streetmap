@@ -13,14 +13,19 @@ from main.model.geo_info_setup import get_geo_info
 from main.model.model import Model
 from main.visu.geo_visualizer import GeoVisualizer
 from main.visu.geo_web_canvas import GeoWebCanvas
+import time
 
 WIDTH = 450
 HEIGHT = 190
 
 class RunnableTourSimGeoFactory:
     def generate_geo_instance(self, order):
+        start_time = time.time()
         geo_info: GeoInfo = order.convert_from_geo_info()
+        print("Geo info get instance time: ", time.time() - start_time)
+        start_time = time.time()
         result = RunnableTourSimGeo(geo_info)
+        print("Runnable tour sim geo time: ", time.time() - start_time)
         return result
 
 
@@ -35,9 +40,13 @@ class RunnableTourSimGeo(RunnableSimulation):
     ) -> None:
 
         # setup environment
-        env = ChangeableFactorRealtimeEnvironment(factor=factor, should_run=should_run)
-        model = Model(env, self.geo_info)
 
+        start_time = time.time()
+        env = ChangeableFactorRealtimeEnvironment(factor=factor, should_run=should_run)
+        print("Env loading time: ", time.time() - start_time)
+        start_time = time.time()
+        model = Model(env, self.geo_info)
+        print("Model init time: ", time.time() - start_time)
         canvas = GeoWebCanvas(shared_state)
         geo_visualizer = GeoVisualizer(canvas)
 

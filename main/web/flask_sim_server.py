@@ -2,7 +2,6 @@
 
 import logging
 import os
-
 from casymda.visualization.web_server.sim_controller import (
     RunnableSimulation,
     SimController,
