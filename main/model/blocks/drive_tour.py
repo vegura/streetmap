@@ -42,8 +42,9 @@ class DriveTour(VisualizableBlock):
 
     def actual_processing(self, entity: Truck):
         truck_position = self.start
-
+        print("Truck_position: ", truck_position)
         for next_stop in self.stops:
+            print(next_stop)
             distance = self.geo_info.get_distance(truck_position, next_stop)
             driving_time = distance / entity.speed
 

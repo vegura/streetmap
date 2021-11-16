@@ -88,8 +88,10 @@ def _init_geo_info(
     names = {}
     descriptions = {}
     for node in od_nodes.index:
-        names[od_nodes.loc[node]["osm_id"]] = node
-        descriptions[node] = od_nodes.loc[node]["description"]
+        #names[od_nodes.loc[node]["osm_id"]] = node
+        names[od_nodes.loc[node]["osm_id"]] = od_nodes.loc[node]["node"]
+        #descriptions[node] = od_nodes.loc[node]["description"]
+        descriptions[od_nodes.loc[node]["node"]] = od_nodes.loc[node]["description"]
     geo_info._node_descriptions = descriptions
 
     relevant_node_ids = od_nodes["osm_id"]

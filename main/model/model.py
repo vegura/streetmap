@@ -51,14 +51,16 @@ class Model:
         )
 
         self.sink = Sink(self.env, "sink", xy=(368, 59), ways={})
-
+        print(geo_info.get_nodes())
         self.drive_tour = DriveTour(
             self.env,
             "drive_tour",
             xy=(230, 59),
             geo_info=geo_info,
-            start="PAT",
-            stops=["ZFB", "MMC", "CAV"],
+            start=geo_info.get_nodes()[0],
+            stops=geo_info.get_nodes()[1:],
+            #start="PAT",
+            #stops=["ZFB", "MMC", "CAV"],
             ways={"sink": [(280, 59), (350, 59)]},
         )
 
