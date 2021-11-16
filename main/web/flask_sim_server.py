@@ -63,7 +63,7 @@ class FlaskSimServer:
                 return send_from_directory(directory, filepath)
 
         @app.route("/order/<order_id>/hidden", methods=["POST"])
-        def get_order(order_id):
+        def get_order_hidden(order_id):
             data = request.json
             order = Order(data["id"], data["route_points"], data["feedback"])
             if order_id not in sim_instances.keys():
