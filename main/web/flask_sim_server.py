@@ -10,6 +10,7 @@ from flask import Flask, request, send_file, send_from_directory, render_templat
 from flask_cors import CORS
 
 from main.model.model import Order
+
 #from main.runnables.geo_web_animation import RunnableTourSimGeoFactory
 
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -62,17 +63,14 @@ class FlaskSimServer:
                 directory = "/usr/src/"
                 return send_from_directory(directory, filepath)
 
-        @app.route("/order/<order_id>/hidden", methods=["POST"])
-        def get_order_hidden(order_id):
+        @app.route("/order/<order_id>/run", methods=["POST"])
+        def post_run_order(order_id):
             data = request.json
             order = Order(data["id"], data["route_points"], data["feedback"])
             if order_id not in sim_instances.keys():
                 sim_instance = self.sim_factory.generate_geo_instance(order)
                 sim_controller = SimController(sim_instance)
                 sim_instances[order_id] = sim_controller
-
-            HTML_FILE = "geo_animation.html"
-            return send_from_directory(flask_dir, HTML_FILE)
 
 
         @app.route("/order/<order_id>")
