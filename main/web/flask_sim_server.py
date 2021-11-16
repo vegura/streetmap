@@ -62,6 +62,19 @@ class FlaskSimServer:
                 directory = "/usr/src/"
                 return send_from_directory(directory, filepath)
 
+        @app.route("/order/<order_id>", methods=["POST"])
+        def get_order(order_id):
+            data = request.json
+            order = Order(data["id"], data["route_points"], data["feedback"])
+            if order_id not in sim_instances.keys():
+                sim_instance = self.sim_factory.generate_geo_instance(order)
+                sim_controller = SimController(sim_instance)
+                sim_instances[order_id] = sim_controller
+
+            HTML_FILE = "geo_animation.html"
+            return send_from_directory(flask_dir, HTML_FILE)
+
+
         @app.route("/order/<order_id>")
         def get_order(order_id):
             # order: json = get_order_from_mongo_by(order_id)
@@ -98,6 +111,7 @@ class FlaskSimServer:
                 runnable_sim = self.sim_factory.generate_geo_instance(order)
                 sim_conrtoller = SimController(runnable_sim)
                 sim_instances[str(order_id)] = sim_conrtoller
+
             HTML_FILE = "geo_animation.html"
             #return send_from_directory(flask_dir, HTML_FILE, sim_instances[str(order_id)])
             return send_from_directory(flask_dir, HTML_FILE)

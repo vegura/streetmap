@@ -31,8 +31,11 @@ class RunnableTourSimGeoFactory:
 
 class RunnableTourSimGeo(RunnableSimulation):
     def __init__(self, geo_info: GeoInfo):
+        print("1 ==============================")
         self.width, self.height = WIDTH, HEIGHT
+        print("2 ==============================")
         self.root_file = root_dir.__file__
+        print("3 ==============================")
         self.geo_info = geo_info
 
     def simulate(
