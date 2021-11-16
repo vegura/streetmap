@@ -159,7 +159,7 @@ def load_graph(center, distance, network_type):
     except:
         print("Unable to extract graph from cache")
         G = ox.graph_from_point(
-            center, distance=distance, simplify=False, network_type=network_type
+            center, distance=distance, simplify=True, network_type=network_type
         )
         ox.save_graphml(G, filename=file_name, folder=cache_dir)
         return G
