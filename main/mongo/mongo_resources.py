@@ -1,0 +1,7 @@
+MONGO_USERNAME = "mongo"
+MONGO_PASSWORD = "mongo"
+
+MONGO_HOST = "localhost"
+MONGO_PORT = 27017
+
+MONGO_DATABASE = "taxi"

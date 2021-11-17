@@ -1,6 +1,7 @@
 """provides control endpoints and serves visual state of a simulation model"""
 
 import logging
+import json
 import os
 from casymda.visualization.web_server.sim_controller import (
     RunnableSimulation,
@@ -12,10 +13,12 @@ from flask_cors import CORS
 from main.model.model import Order
 
 #from main.runnables.geo_web_animation import RunnableTourSimGeoFactory
+from main.mongo.mongo_service import MongoOrderDao
 
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 sim_instances = {}
+mongo_order_dao = MongoOrderDao()
 
 class FlaskSimServer:
 
@@ -63,14 +66,19 @@ class FlaskSimServer:
                 directory = "/usr/src/"
                 return send_from_directory(directory, filepath)
 
-        @app.route("/order/<order_id>/run", methods=["POST"])
+        @app.route("/order/<order_id>/save", methods=["POST"])
         def post_run_order(order_id):
-            data = request.json
-            order = Order(data["id"], data["route_points"], data["feedback"])
-            if order_id not in sim_instances.keys():
-                sim_instance = self.sim_factory.generate_geo_instance(order)
-                sim_controller = SimController(sim_instance)
-                sim_instances[order_id] = sim_controller
+            json_data_str = request.data
+            data = json.loads(json_data_str)
+            print("====> ", str(data), "--", data["id"])
+            # order = Order(data["id"], data["route_points"], data["feedback"])
+            # if order_id not in sim_instances.keys():
+            #     sim_instance = self.sim_factory.generate_geo_instance(order)
+            #     sim_controller = SimController(sim_instance)
+            #     sim_instances[order_id] = sim_controller
+
+            mongo_order_dao.save_order(data)
+
 
 
         @app.route("/order/<order_id>")
