@@ -38,7 +38,7 @@ async function start_simulation() {
 }
 
 function request_state_loop() {
-    if (!stopped) running_timeouts.push(setTimeout(state_query, 20, [request_state_loop, animate_current_state]));
+    if (!stopped) running_timeouts.push(setTimeout(state_query, 1, [request_state_loop, animate_current_state]));
 }
 
 async function state_query(callbacks) {

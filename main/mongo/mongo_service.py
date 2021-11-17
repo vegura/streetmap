@@ -14,7 +14,6 @@ class MongoOrderDao:
         self.collection = self.db[MONGO_COLLECTION]
 
         print(f"Connection to database: \n\tHOST: {res.MONGO_HOST}\n\tPORT: {res.MONGO_PORT}")
-        print(f"Success? {self.client[res.MONGO_DATABASE]}")
 
     def save_order(self, order: json):
         print(f"saving order -> {str(order)}")
@@ -24,15 +23,4 @@ class MongoOrderDao:
         return self.collection.find_one(self.collection, {"postal_code": postal_code})
 
     def find_order_by_id(self, id: int):
-        return self.collection.find_one(self.collection, {"id": id})
-
-def save_order_static(order: json):
-    db_client = MongoClient(res.MONGO_HOST + ":" + str(res.MONGO_PORT))
-    db = db_client[res.MONGO_DATABASE]
-    collection = db["Orders"]
-
-    print(f"=================== ORDER BEFORE SAVING IN DB {str(order)}")
-    # order_created = collection.insert_many(order)
-    order_created = collection.insert_one(order)
-    print(f"DB: {str(order_created)}")
-    return order_created.inserted_id
+        return self.collection.find_one({"id": id})

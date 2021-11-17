@@ -203,7 +203,6 @@ def load_nodes_order(route_points, graph) -> pd.DataFrame:
     return df
 
 
-
 def get_cache_dir(nodes_csv_path) -> str:
     cache_dir = os.path.dirname(nodes_csv_path) + "/cache"
     os.makedirs(cache_dir, exist_ok=True)
