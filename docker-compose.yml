@@ -43,4 +43,12 @@ services:
       - .:/usr/src
     ports:
       - "5000:5000"
+    expose:
+      - "27017"
     command: "python3 ./exec/geo_web_animation.py"
+
+
+  mongo_db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

@@ -21,7 +21,7 @@ class Order:
         ## CENTER - get centroid between route points
         ## DISTANCE - get max distance from centroid to route points + delta
         CENTER = (51.4978, -0.1533)
-        DISTANCE = 3000
+        DISTANCE = 10_000
         NETWORK_TYPE="drive"
         return init(
             route_points = self.route_points,

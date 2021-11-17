@@ -13,7 +13,7 @@ from flask_cors import CORS
 from main.model.model import Order
 
 #from main.runnables.geo_web_animation import RunnableTourSimGeoFactory
-from main.mongo.mongo_service import MongoOrderDao
+from main.mongo.mongo_service import MongoOrderDao, save_order_static
 
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
@@ -77,41 +77,45 @@ class FlaskSimServer:
             #     sim_controller = SimController(sim_instance)
             #     sim_instances[order_id] = sim_controller
 
-            mongo_order_dao.save_order(data)
+            # order_id = mongo_order_dao.save_order(data)
+            order_id = save_order_static(data)
+            print("========> ", order_id)
 
 
 
         @app.route("/order/<order_id>")
         def get_order(order_id):
             # order: json = get_order_from_mongo_by(order_id)
+            #    return render_template("user.html",
             #
-            order_json = {
-                  "id": 12343,
-                  "route_points":[
-                    {
-                      "id": 1,
-                      "postal_code": "SW1X 8BY",
-                      "x": 51.49701939844378,
-                      "y": -0.15334817975876766,
-                      "description": "aaaaa"
-                    },
-                    {
-                      "id": 2,
-                      "postal_code": "SW1X 9BC",
-                      "x": 51.4952531089578,
-                      "y": -0.14379338326757904,
-                      "description": "aaaaa"
-                    },
-                    {
-                      "id": 3,
-                      "postal_code": "SW1X 4EZ",
-                      "x": 51.49404056290103,
-                      "y": -0.15337663339296168,
-                      "description": "aaaaa"
-                    }
-                  ],
-                  "feedback": "Was a nice ride"
-            }
+            # order_json = {
+            #       "id": 12343,
+            #       "route_points":[
+            #         {
+            #           "id": 1,
+            #           "postal_code": "SW1X 8BY",
+            #           "x": 51.49701939844378,
+            #           "y": -0.15334817975876766,
+            #           "description": "aaaaa"
+            #         },
+            #         {
+            #           "id": 2,
+            #           "postal_code": "SW1X 9BC",
+            #           "x": 51.4952531089578,
+            #           "y": -0.14379338326757904,
+            #           "description": "aaaaa"
+            #         },
+            #         {
+            #           "id": 3,
+            #           "postal_code": "SW1X 4EZ",
+            #           "x": 51.49404056290103,
+            #           "y": -0.15337663339296168,
+            #           "description": "aaaaa"
+            #         }
+            #       ],
+            #       "feedback": "Was a nice ride"
+            # }
+            order_json = mongo_order_dao.find_order_by_id(order_id)
             order = Order(order_json["id"], order_json["route_points"], order_json["feedback"])
             if not str(order_id) in sim_instances.keys():
                 runnable_sim = self.sim_factory.generate_geo_instance(order)

@@ -9,11 +9,15 @@ MONGO_COLLECTION = "Orders"
 
 class MongoOrderDao:
     def __init__(self):
-        self.client = MongoClient(res.MONGO_HOST, res.MONGO_PORT)
+        self.client = MongoClient(res.MONGO_HOST + ":" + str(res.MONGO_PORT))
         self.db = self.client[res.MONGO_DATABASE]
         self.collection = self.db[MONGO_COLLECTION]
 
-    def save_order(self, order: Order):
+        print(f"Connection to database: \n\tHOST: {res.MONGO_HOST}\n\tPORT: {res.MONGO_PORT}")
+        print(f"Success? {self.client[res.MONGO_DATABASE]}")
+
+    def save_order(self, order: json):
+        print(f"saving order -> {str(order)}")
         return self.collection.insert_one(order).inserted_id
 
     def find_order_by_postal_code(self, postal_code: str):
@@ -21,3 +25,14 @@ class MongoOrderDao:
 
     def find_order_by_id(self, id: int):
         return self.collection.find_one(self.collection, {"id": id})
+
+def save_order_static(order: json):
+    db_client = MongoClient(res.MONGO_HOST + ":" + str(res.MONGO_PORT))
+    db = db_client[res.MONGO_DATABASE]
+    collection = db["Orders"]
+
+    print(f"=================== ORDER BEFORE SAVING IN DB {str(order)}")
+    # order_created = collection.insert_many(order)
+    order_created = collection.insert_one(order)
+    print(f"DB: {str(order_created)}")
+    return order_created.inserted_id

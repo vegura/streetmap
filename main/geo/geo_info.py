@@ -56,6 +56,21 @@ def init(
     network_type="drive",
 ) -> GeoInfo:
 
+    # need to reformat this horrible part of code
+    filename = "shit_object" + create_hash(str(route_points))
+    cache_path = "/usr/src/cache"
+    file_path = cache_path + "/_temp_obj_" + filename + ".pickle"
+
+    try:
+        with open(file_path, "rb") as cache_file:
+            geo_info = pickle.load(cache_file)
+    except FileNotFoundError:
+        geo_info = _init_geo_info(route_points, center, distance, network_type)
+        with open(file_path, "wb+") as cache_file:
+            pickle.dump(geo_info, cache_file)
+
+    return geo_info
+
     #h = create_hash(
     #    get_file_hash(nodes_csv_path) + get_graph_hash(center, distance, network_type)
     #)
@@ -66,10 +81,9 @@ def init(
     #        geo_info = pickle.load(f)
     #except FileNotFoundError:
     #geo_info = _init_geo_info(nodes_csv_path, center, distance, network_type)
-    geo_info = _init_geo_info(route_points, center, distance, network_type)
+    # geo_info = _init_geo_info(route_points, center, distance, network_type) # I. Tsuprun code loading
     #    with open(cache_path, "wb+") as f:
     #        pickle.dump(geo_info, f)
-    return geo_info
 
 
 def _init_geo_info(
