@@ -43,12 +43,12 @@ services:
       - .:/usr/src
     ports:
       - "5000:5000"
-    expose:
-      - "27017"
     command: "python3 ./exec/geo_web_animation.py"
+    networks:
+      - streetmap_network
 
+networks:
+  streetmap_network:
+    external: true
+    name: map_net
 
-  mongo_db:
-    image: mongo:latest
-    ports:
-      - "27017:27017"

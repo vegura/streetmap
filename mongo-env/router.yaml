@@ -1,0 +1,33 @@
+version: "2"
+services:
+  mongos_1:
+    container_name: c_mongo_1
+    image: mongo:5.0.3
+    command: mongos --bind_ip_all --configdb mongo_rs1_config/mongo_config_1:27017,mongo_config_2:27017,mongo_config_3:27017 
+    ports:
+      - "27019:27017"
+    expose:
+      - "27017"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - streetmap_network
+
+  mongos_2:
+    container_name: c_mongo_2
+    image: mongo:5.0.3
+    command: mongos --bind_ip_all --configdb mongo_rs1_config/mongo_config_1:27017,mongo_config_2:27017,mongo_config_3:27017
+    ports:
+      - "27020:27017"
+    expose:
+      - "27017"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - streetmap_network
+
+
+networks:
+  streetmap_network:
+    external: true
+    name: map_net

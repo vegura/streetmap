@@ -1,7 +1,7 @@
 MONGO_USERNAME = "mongo"
 MONGO_PASSWORD = "mongo"
 
-MONGO_HOST = "mongo_db"
+MONGO_HOST = "mongos_1"
 MONGO_PORT = 27017
 
 MONGO_DATABASE = "taxi"

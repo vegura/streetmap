@@ -70,7 +70,20 @@ class FlaskSimServer:
         @app.route("/order/<order_id>")
         def get_order(order_id):
             order_json = mongo_order_dao.find_order_by_id(int(order_id))
-            order = Order(order_json["id"], order_json["route_points"], order_json["feedback"])
+            route_points = []
+            for route in order_json["route_points"]:
+                x = float(str(route['x']))
+                y = float(str(route['y']))
+                route_points.append({
+                    "_id": route['_id'],
+                    "postal_code": route['postal_code'],
+                    "x": x,
+                    "y": y,
+                    "description": route['description']
+                })
+            print("============================> ", order_json)
+            # order = Order(order_json["id"], order_json["route_points"], order_json["feedback"])
+            order = Order(order_json["_id"], route_points, "Feedback is not specified")
             if not str(order_id) in sim_instances.keys():
                 runnable_sim = self.sim_factory.generate_geo_instance(order)
                 sim_controller = SimController(runnable_sim)

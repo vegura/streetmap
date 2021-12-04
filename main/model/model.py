@@ -20,8 +20,19 @@ class Order:
         ## define distance
         ## CENTER - get centroid between route points
         ## DISTANCE - get max distance from centroid to route points + delta
-        CENTER = (51.4978, -0.1533)
-        DISTANCE = 10_000
+        x0, y0 = self.route_points[0]['x'], self.route_points[0]['y']
+        CENTER = (x0, y0)
+        distances = []
+        for point in self.route_points:
+            x_i = point['x']
+            y_i = point['y']
+            distances.append(((x_i - x0)**2 + (y_i - y0)**2)**0.5)
+        print("Distances: ", distances)
+        DISTANCE = max(distances)*111139*1.25
+
+        #CENTER = (51.4978, -0.1533)
+        #DISTANCE = 10_000
+
         NETWORK_TYPE="drive"
         return init(
             route_points = self.route_points,

@@ -5,7 +5,7 @@ import json
 
 from main.model.model import Order
 
-MONGO_COLLECTION = "Orders"
+MONGO_COLLECTION = "orders"
 
 class MongoOrderDao:
     def __init__(self):
@@ -23,4 +23,5 @@ class MongoOrderDao:
         return self.collection.find_one(self.collection, {"postal_code": postal_code})
 
     def find_order_by_id(self, id: int):
-        return self.collection.find_one({"id": id})
+        return self.collection.find_one({"_id": id})
+

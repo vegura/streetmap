@@ -1,0 +1,10 @@
+version: "2"
+networks:
+  streetmap_network:
+    driver: bridge
+
+services:
+  manual_checker:
+    image: ubuntu
+    networks:
+      - streetmap_network

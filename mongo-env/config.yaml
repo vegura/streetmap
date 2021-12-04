@@ -1,0 +1,52 @@
+version: "2"
+services:
+  mongo_config_1:
+    container_name: c_mongo_config_1
+    image: mongo:5.0.3
+    command: mongod --configsvr --replSet mongo_rs1_config --dbpath /data/db --port 27017
+    environment:
+      TERM: xterm
+    expose:
+      - "27017"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DATA_DIR/config1:/data/db
+    networks:
+      - streetmap_network
+
+  mongo_config_2:
+    container_name: c_mongo_config_2
+    image: mongo:5.0.3
+    command: mongod --configsvr --replSet mongo_rs1_config --dbpath /data/db --port 27017
+    environment:
+      TERM: xterm
+    expose:
+      - "27017"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DATA_DIR/config2:/data/db
+    networks:
+      - streetmap_network
+
+  mongo_config_3:
+    container_name: c_mongo_config_3
+    image: mongo:5.0.3
+    command: mongod --configsvr --replSet mongo_rs1_config --dbpath /data/db --port 27017 
+    environment:
+      TERM: xterm
+    expose:
+      - "27017"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DATA_DIR/config3:/data/db
+    networks:
+      - streetmap_network
+
+networks:
+  streetmap_network:
+    driver: bridge
+    name: map_net
+
+# networks:
+#   streetmap_network:
+#     external: true
